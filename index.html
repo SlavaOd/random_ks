@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рандомний вибір номерів</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: #F4F4F4;
+            color: #333;
+        }
+
+        #container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        h2,h3 {
+            text-align: center;
+            color: #005BBB;
+            font-weight: bold;
+        }
+
+        label {
+            color: #005BBB;
+            font-weight: bold;
+        }
+
+        textarea, input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #FFD700;
+            color: #005BBB;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #FFC107;
+        }
+
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid #005BBB;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        #popup h3 {
+            color: #005BBB;
+        }
+
+        #popup button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            border: none;
+            background-color: #005BBB;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #popup button:hover {
+            background-color: #003E75;
+        }
+
+        #countdown {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #005BBB;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <h3>Odessa cluster - top</h3>
+    <h2>Рандомний вибір номерів</h2>
+
+    <form id="randomForm">
+        <label for="numbers">Додайте список номерів (по одному номеру в рядок):</label><br>
+        <textarea id="numbers" rows="10" required></textarea><br>
+
+        <label for="count">Кількість переможців:</label><br>
+        <input type="number" id="count" min="1" required><br>
+
+        <button type="button" onclick="startCountdown()">Обрати переможців</button>
+    </form>
+</div>
+
+<div id="popup">
+    <div id="countdown">3</div>
+    <h3>Переможці:</h3>
+    <ul id="result"></ul>
+    <button onclick="closePopup()">Закрити</button>
+</div>
+
+<script>
+    function startCountdown() {
+        let countdown = 3;
+        const countdownElement = document.getElementById('countdown');
+        const interval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            if (countdown === 0) {
+                clearInterval(interval);
+                randomizeNumbers();
+            }
+        }, 1000);
+        document.getElementById('popup').style.display = 'block';
+    }
+
+    function randomizeNumbers() {
+        const numbers = document.getElementById('numbers').value.split('\n').map(num => num.trim()).filter(num => num !== '');
+        const count = parseInt(document.getElementById('count').value);
+
+        if (numbers.length < count) {
+            alert("Кількість номерів для вибору не може перевищувати кількість доступних номерів.");
+            closePopup();
+            return;
+        }
+
+        const shuffled = numbers.sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, count);
+
+        const resultElement = document.getElementById('result');
+        resultElement.innerHTML = '';
+        selected.forEach(num => {
+            const li = document.createElement('li');
+            li.textContent = num;
+            resultElement.appendChild(li);
+        });
+
+        document.getElementById('countdown').style.display = 'none'; // Скрыть таймер после окончания отсчета
+    }
+
+    function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('countdown').textContent = '3'; // Сбросить таймер для следующего запуска
+        document.getElementById('countdown').style.display = 'block'; // Показать таймер для следующего запуска
+    }
+</script>
+
+</body>
+</html>
